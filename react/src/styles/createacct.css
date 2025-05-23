@@ -95,12 +95,11 @@
   margin: 6px 0;
 }
 
-
 .rule-box {
   width: 14px;
   height: 14px;
-  accent-color: #2e7d32; 
-  pointer-events: none; 
+  accent-color: #2e7d32;
+  pointer-events: none;
 }
 
 .rule-text {
@@ -108,25 +107,22 @@
   color: #777;
 }
 .rule-text.ok {
-  color: #2e7d32; 
+  color: #2e7d32;
   font-weight: 600;
 }
-
 
 .terms-click {
   width: 16px;
   height: 16px;
-  accent-color: #555; 
+  accent-color: #555;
   cursor: default;
-  pointer-events: none; 
+  pointer-events: none;
   margin-right: 6px;
 }
 
-
 .terms-click.accepted {
-  accent-color: #2e7d32; 
+  accent-color: #2e7d32;
 }
-
 
 .terms-row {
   display: flex;
@@ -134,7 +130,6 @@
   gap: 6px;
   margin-top: 16px;
 }
-
 
 button[disabled] {
   opacity: 0.5;
