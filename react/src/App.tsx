@@ -12,6 +12,7 @@ import Reports from "./pages/main-site/reports";
 import UserOverview from "./pages/main-site/user_overview";
 import MountainLine from "./pages/main-site/graphs-charts/handleMountainLine";
 import BarChart from "./pages/main-site/graphs-charts/handleBar";
+import Messages from "./pages/main-site/messages";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/user-overview" element={<UserOverview />} />
         <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/messages" element={<Messages />} />
       </Routes>
     </Router>
   );

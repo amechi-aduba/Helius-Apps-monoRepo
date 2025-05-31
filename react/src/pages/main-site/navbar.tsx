@@ -46,6 +46,7 @@ const Nav: React.FC = () => {
     { label: "Reports", path: "/reports" },
     { label: "Campaigns", path: "/campaigns" },
     { label: "Chatbot", path: "/chatbot" },
+    { label: "Messages", path: "/messages" },
   ];
 
   return (
