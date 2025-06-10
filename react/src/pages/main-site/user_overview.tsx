@@ -20,7 +20,8 @@ interface UserData {
   email: string;
   phone: string;
   specialty: string;
-  status: string;
+  status: "Active" | "Inactive";
+  last_active_date: Date;
 }
 
 const containerStyle: React.CSSProperties = {
@@ -207,26 +208,34 @@ const UserOverview: React.FC = () => {
     []
   );
 
-  const rowData = useMemo<UserData[]>(
-    () =>
-      [
-        {
-          name: "Student",
-          type: "Student",
-          email: "activestudent@...",
-          phone: "+1 234 456 7890",
-          specialty: "Emergency Room",
-          status: "Active",
-        },
-        {
-          name: "Nurse",
-          type: "Nurse",
-          email: "inactivenurse@...",
-          phone: "+1 234 456 7890",
-          specialty: "Home Health",
-          status: "Inactive",
-        },
-      ].filter((row) => {
+  const specialties: string[] = [
+    "Emergency Room",
+    "Home Health",
+    "Telehealth",
+    "Parent-Child",
+    "Psychiatric",
+    "Rehabilitation",
+    "Critical Care",
+    "Public Health",
+    "Home Health",
+  ];
+
+  const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
+
+  const rowData = useMemo<UserData[]>(() => {
+    return storedUsers
+      .map((user: any) => ({
+        name: user.name,
+        type: user.role,
+        email: user.email,
+        phone: user.phone,
+        specialty: specialties[Math.floor(Math.random() * specialties.length)],
+        status: Math.random() > 0.5 ? "Active" : "Inactive",
+        last_active_date: new Date(
+          Date.now() - Math.floor(Math.random() * 10000000000)
+        ),
+      }))
+      .filter((row: UserData) => {
         const matchesFilter =
           filter === "All"
             ? true
@@ -235,17 +244,16 @@ const UserOverview: React.FC = () => {
         const matchesSearch =
           searchText === ""
             ? true
-            : Object.keys(row).some((key) =>
-                row[key as keyof UserData]
+            : Object.values(row).some((value) =>
+                value
                   .toString()
                   .toLowerCase()
                   .includes(searchText.toLowerCase())
               );
 
         return matchesFilter && matchesSearch;
-      }),
-    [filter, searchText]
-  );
+      });
+  }, [filter, searchText]);
 
   const gridOptions = {
     headerHeight: 48,

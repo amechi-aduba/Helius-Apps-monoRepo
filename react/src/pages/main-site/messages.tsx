@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "./layout";
-import { FaRobot, FaUser, FaPaperPlane } from "react-icons/fa";
+import { FaUser, FaPaperPlane } from "react-icons/fa";
 
 const containerStyle: React.CSSProperties = {
   display: "flex",
@@ -122,10 +122,18 @@ const addButtonStyle: React.CSSProperties = {
 };
 
 const Messages: React.FC = () => {
-  const [users, setUsers] = useState<
-    { email: string; name: string; phone: string; role: string }[]
-  >([]);
+  const [users, setUsers] = useState(() => {
+    const savedUsers = localStorage.getItem("users");
+    return savedUsers ? JSON.parse(savedUsers) : [];
+  });
+
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem("chatMessages");
+    return saved ? JSON.parse(saved) : {};
+  });
+
   const [selectedUser, setSelectedUser] = useState<number | null>(null);
+  const [messageInput, setMessageInput] = useState("");
   const [showAddUser, setShowAddUser] = useState(false);
   const [newUser, setNewUser] = useState({
     email: "",
@@ -136,11 +144,48 @@ const Messages: React.FC = () => {
 
   const handleAddUser = () => {
     if (!newUser.email || !newUser.name || !newUser.phone) return;
-    setUsers([...users, newUser]);
+    const specialties = [
+      "Emergency Room",
+      "Home Health",
+      "Telehealth",
+      "Parent-Child",
+      "Psychiatric",
+      "Rehabilitation",
+      "Critical Care",
+      "Public Health",
+    ];
+    const fullUser = {
+      ...newUser,
+      specialty: specialties[Math.floor(Math.random() * specialties.length)],
+      status: Math.random() > 0.5 ? "Active" : "Inactive",
+      last_active_date: new Date().toISOString(),
+    };
+    setUsers([...users, fullUser]);
     setNewUser({ email: "", name: "", phone: "", role: "Student" });
     setShowAddUser(false);
     setSelectedUser(users.length);
   };
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedUser === null || !messageInput.trim()) return;
+    const userEmail = users[selectedUser].email;
+    const newMsg = { sender: "user", text: messageInput.trim() };
+    const updatedMsgs = {
+      ...messages,
+      [userEmail]: [...(messages[userEmail] || []), newMsg],
+    };
+    setMessages(updatedMsgs);
+    setMessageInput("");
+  };
+
+  useEffect(() => {
+    localStorage.setItem("users", JSON.stringify(users));
+  }, [users]);
+
+  useEffect(() => {
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
+  }, [messages]);
 
   return (
     <Layout>
@@ -153,30 +198,26 @@ const Messages: React.FC = () => {
                 No users selected.
               </p>
             ) : (
-              <>
-                <div style={msgRowStyle(false)}>
-                  <FaRobot style={iconStyle} />
-                  <div style={bubbleStyle(false)}>
-                    Sample message from {users[selectedUser].name}
-                  </div>
-                </div>
-                <div style={msgRowStyle(true)}>
-                  <div style={bubbleStyle(true)}>
-                    Hello {users[selectedUser].name}! How can I assist you?
+              (messages[users[selectedUser].email] || []).map((msg, i) => (
+                <div key={i} style={msgRowStyle(msg.sender === "user")}>
+                  <div style={bubbleStyle(msg.sender === "user")}>
+                    {msg.text}
                   </div>
                   <FaUser
                     style={{ ...iconStyle, marginRight: 0, marginLeft: 8 }}
                   />
                 </div>
-              </>
+              ))
             )}
           </div>
 
-          <form style={chatFormStyle}>
+          <form style={chatFormStyle} onSubmit={handleSendMessage}>
             <input
               type="text"
               placeholder="Type a message..."
               style={chatInputStyle}
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
             />
             <button type="submit" style={sendButtonStyle}>
               <FaPaperPlane />

@@ -77,33 +77,64 @@ const sendButtonStyle: React.CSSProperties = {
   cursor: "pointer",
 };
 
+interface ChatMessage {
+  sender: "user" | "bot";
+  text: string;
+}
+
 const Chatbot: React.FC = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      sender: "bot",
+      text: "Hello! I’m your assistant. How can I help you today?",
+    },
+  ]);
+  const [input, setInput] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const newMessages = [...messages, { sender: "user", text: input }];
+    setMessages(newMessages);
+    setInput("");
+
+    // Simulate bot response
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: `Thanks for your message: "${input}"` },
+      ]);
+    }, 800);
+  };
+
   return (
     <Layout>
-      <div style={headerStyle}>
-        <div style={headerStyle}>Chatbot</div>
-      </div>
+      <div style={headerStyle}>Chatbot</div>
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
       >
         <div style={cardStyle}>
           <div style={chatBodyStyle}>
-            <div style={msgRowStyle(false)}>
-              <FaRobot style={iconStyle} />
-              <div style={bubbleStyle(false)}>
-                Hello! I’m your assistant. How can I help you today?
+            {messages.map((msg, idx) => (
+              <div key={idx} style={msgRowStyle(msg.sender === "user")}>
+                {msg.sender === "bot" && <FaRobot style={iconStyle} />}
+                <div style={bubbleStyle(msg.sender === "user")}>{msg.text}</div>
+                {msg.sender === "user" && (
+                  <FaUser
+                    style={{ ...iconStyle, marginRight: 0, marginLeft: 8 }}
+                  />
+                )}
               </div>
-            </div>
-            <div style={msgRowStyle(true)}>
-              <div style={bubbleStyle(true)}>Sample user message...</div>
-              <FaUser style={{ ...iconStyle, marginRight: 0, marginLeft: 8 }} />
-            </div>
+            ))}
           </div>
 
-          <form style={chatFormStyle}>
+          <form style={chatFormStyle} onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Type a message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
               style={chatInputStyle}
             />
             <button type="submit" style={sendButtonStyle}>
