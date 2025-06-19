@@ -14,7 +14,8 @@
     "ag-grid-react": "33.3.0",
     "scichart": "3.5.760",
     "ag-grid-community": "33.3.0",
-    "@supabase/supabase-js": "2.50.0"
+    "@supabase/supabase-js": "2.50.0",
+    "ajv": "6.12.6"
   },
   "devDependencies": {
     "@types/react": "19.0.0",
