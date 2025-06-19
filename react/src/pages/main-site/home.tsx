@@ -1,9 +1,9 @@
 import React from "react";
 import Layout from "./layout";
-import { SciChartSurface } from "scichart-react";
-import { SciChartSurface as SciChartCore } from "scichart";
+import { useEffect, useState } from "react";
 import MountainLine from "./graphs-charts/handleMountainLine";
 import BarChart from "./graphs-charts/handleBar";
+import { supabase } from "./supabase/createClient";
 
 const dashboardGridStyle: React.CSSProperties = {
   display: "grid",
@@ -173,6 +173,20 @@ const completedCheckboxStyle: React.CSSProperties = {
 };
 
 const Home: React.FC = () => {
+  const [kpis, setKpis] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchKpis = async () => {
+      const { data, error } = await supabase.from("dashboard_kpis").select("*");
+      if (error) {
+        console.error("Failed to fetch KPIs:", error.message);
+      } else {
+        setKpis(data?.[0]);
+      }
+    };
+    fetchKpis();
+  }, []);
+
   return (
     <Layout>
       <div>
@@ -186,48 +200,26 @@ const Home: React.FC = () => {
             <h3 style={cardTitleStyle}>Key Performance Indicators</h3>
             <div style={kpiContainerStyle}>
               <div style={metricItemStyle}>
-                <div style={metricValueStyle}>
-                  1,000
-                  <span
-                    style={{
-                      color: "#28a745",
-                      fontSize: "16px",
-                      marginLeft: "5px",
-                    }}
-                  >
-                    ↑
-                  </span>
-                </div>
-                <div style={metricLabelStyle}>Total Sign-ups (Monthly)</div>
+                <div style={metricValueStyle}>{kpis?.total_users ?? "..."}</div>
+                <div style={metricLabelStyle}>Total Users</div>
               </div>
               <div style={metricItemStyle}>
                 <div style={metricValueStyle}>
-                  13.2%
-                  <span
-                    style={{
-                      color: "#28a745",
-                      fontSize: "16px",
-                      marginLeft: "5px",
-                    }}
-                  >
-                    ↑
-                  </span>
+                  {kpis?.response_pct ?? "..."}%
                 </div>
-                <div style={metricLabelStyle}>Conversion Rate</div>
+                <div style={metricLabelStyle}>Response Rate</div>
               </div>
               <div style={metricItemStyle}>
-                <div style={smallMetricValueStyle}>4.6/5</div>
-                <div style={metricLabelStyle}>Overall Satisfaction</div>
+                <div style={metricValueStyle}>
+                  {kpis?.completion_pct ?? "..."}%
+                </div>
+                <div style={metricLabelStyle}>Completion Rate</div>
               </div>
               <div style={metricItemStyle}>
                 <div style={smallMetricValueStyle}>
-                  35
-                  <span style={{ fontSize: "14px", fontWeight: "normal" }}>
-                    {" "}
-                    minutes
-                  </span>
+                  {kpis?.avg_response_secs ?? "..."} sec
                 </div>
-                <div style={metricLabelStyle}>Avg. Session Duration</div>
+                <div style={metricLabelStyle}>Avg. Response Time</div>
               </div>
             </div>
           </div>
@@ -235,13 +227,13 @@ const Home: React.FC = () => {
           {/* Survey Completion Rate Card */}
           <div style={surveyCardStyle}>
             <h3 style={cardTitleStyle}>Survey Completion Rate</h3>
-            <MountainLine></MountainLine>
+            <MountainLine type="completion"></MountainLine>
           </div>
 
           {/* User Engagement Card */}
           <div style={cardStyle}>
             <h3 style={cardTitleStyle}>User Engagement</h3>
-            <MountainLine></MountainLine>
+            <MountainLine type="engagement"></MountainLine>
           </div>
 
           {/* Acquisition Channels Card */}

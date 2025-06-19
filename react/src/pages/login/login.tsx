@@ -1,17 +1,30 @@
+// src/pages/login/LoginPage.tsx
 import React, { useState } from "react";
-import "../../styles/login.css";
 import { useNavigate } from "react-router-dom";
+import "../../styles/login.css";
 
 const LoginPage: React.FC = () => {
-  const [pswdforget, setPswdforget] = useState<boolean>(false);
-  const [resetConfirmed, setResetConfirmed] = useState<boolean>(false);
-  const [acctCreate, setAcctCreate] = useState<boolean>(false); // not currently used
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Login logic
+    setErrorMsg(null);
+
+    try {
+      // Replace fakeLoginApi with your real login call if you have one
+      await fakeLoginApi(email, password);
+
+      // On success, store a flag in localStorage so PrivateRoute will pass
+      localStorage.setItem("token", "true");
+
+      // Redirect to home
+      navigate("/", { replace: true });
+    } catch (err: any) {
+      setErrorMsg(err.message || "Login failed.");
+    }
   };
 
   return (
@@ -25,100 +38,50 @@ const LoginPage: React.FC = () => {
       </div>
       <div className="login-right">
         <div className="login-box">
-          {pswdforget ? (
-            resetConfirmed ? (
-              <div className="resetpswd">
-                <h2>Forgot Password</h2>
-                <p>
-                  We’ve sent a password reset link to your email
-                  <br />
-                  <strong>{email}</strong>
-                </p>
-                <button type="button">Continue</button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPswdforget(false);
-                    setResetConfirmed(false);
-                    setEmail("");
-                  }}
-                >
-                  Back to Sign In
-                </button>
-                <p className="resend">
-                  Didn’t receive the mail? <a href="#">Click to resend</a>
-                </p>
-              </div>
-            ) : (
-              <div className="resetpswd">
-                <h2>Reset Password</h2>
-                <form
-                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                    e.preventDefault();
-                    setResetConfirmed(true);
-                  }}
-                >
-                  <label htmlFor="email">E-mail</label>
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  <button type="submit">Reset Password</button>
-                  <button type="button" onClick={() => setPswdforget(false)}>
-                    Back
-                  </button>
-                </form>
-              </div>
-            )
-          ) : (
-            <>
-              <h2>Sign in</h2>
-              <form onSubmit={handleSubmit}>
-                <label htmlFor="email">E-mail</label>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <label htmlFor="password">Password</label>
-                <input
-                  type="password"
-                  id="password"
-                  placeholder="Enter your password"
-                />
-                <div className="login-options">
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPswdforget(true);
-                    }}
-                  >
-                    Forgot Password?
-                  </a>
-                </div>
-                <button type="submit">Login</button>
-              </form>
-              <p className="signup">
-                Need an Account?{" "}
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate("/create");
-                  }}
-                >
-                  Sign up
-                </a>
-              </p>
-            </>
-          )}
+          <h2>Sign In</h2>
+          {errorMsg && <p className="error">{errorMsg}</p>}
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="email">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <div className="login-options">
+              <a href="#" onClick={(e) => e.preventDefault()}>
+                Forgot Password?
+              </a>
+            </div>
+
+            <button type="submit">Login</button>
+          </form>
+
+          <p className="signup">
+            Need an account?{" "}
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/create");
+              }}
+            >
+              Sign up
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -126,3 +89,19 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
+
+/**
+ * Temporary stub for authentication.
+ * Replace this with your real API call.
+ */
+function fakeLoginApi(email: string, password: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (email.trim() && password.trim()) {
+        resolve();
+      } else {
+        reject(new Error("Please enter both email and password."));
+      }
+    }, 500);
+  });
+}

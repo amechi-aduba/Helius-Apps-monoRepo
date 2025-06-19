@@ -1,3 +1,4 @@
+// charts/drawMountainLine.ts
 import {
   SciChartSurface,
   NumericAxis,
@@ -7,47 +8,62 @@ import {
   Point,
   XyDataSeries,
 } from "scichart";
+import { SciChartJSLightTheme } from "scichart/Charting/Themes/SciChartJSLightTheme";
 
 SciChartSurface.loadWasmFromCDN();
 
-// You can remove appTheme if you're not styling right now
+// New interface for axis titles
+export interface MountainOptions {
+  xAxisTitle?: string;
+  yAxisTitle?: string;
+}
+
 export const drawMountainLine = async (
-  rootElement: string | HTMLDivElement
+  rootElement: string | HTMLDivElement,
+  chartData: { xValues: number[]; yValues: number[] },
+  options: MountainOptions = {}
 ) => {
-  const { sciChartSurface, wasmContext } = await SciChartSurface.create(
+  const { wasmContext, sciChartSurface } = await SciChartSurface.create(
     rootElement
   );
 
-  // Axes
-  const xAxis = new NumericAxis(wasmContext, {
-    growBy: new NumberRange(0.1, 0.1),
-  });
-  const yAxis = new NumericAxis(wasmContext, {
-    growBy: new NumberRange(0.1, 0.1),
-  });
-  sciChartSurface.xAxes.add(xAxis);
-  sciChartSurface.yAxes.add(yAxis);
+  // Always apply the light theme
+  sciChartSurface.applyTheme(new SciChartJSLightTheme());
 
-  // Static data (replace this with your own data if needed)
-  const xValues = Array.from({ length: 50 }, (_, i) => i);
-  const yValues = xValues.map((x) => Math.sin(x * 0.1) * 10);
+  // X Axis
+  sciChartSurface.xAxes.add(
+    new NumericAxis(wasmContext, {
+      axisTitle: options.xAxisTitle ?? "",
+      growBy: new NumberRange(0.1, 0.1),
+    })
+  );
 
-  const dataSeries = new XyDataSeries(wasmContext, {
-    xValues,
-    yValues,
+  // Y Axis
+  sciChartSurface.yAxes.add(
+    new NumericAxis(wasmContext, {
+      axisTitle: options.yAxisTitle ?? "",
+      growBy: new NumberRange(0.1, 0.1),
+    })
+  );
+
+  // Data
+  const ds = new XyDataSeries(wasmContext, {
+    xValues: chartData.xValues,
+    yValues: chartData.yValues,
   });
 
   sciChartSurface.renderableSeries.add(
     new FastMountainRenderableSeries(wasmContext, {
-      dataSeries,
-      stroke: "#4EC1E8",
-      strokeThickness: 3,
+      dataSeries: ds,
+      stroke: "#ffffff",
+      strokeThickness: 2,
       fillLinearGradient: new GradientParams(new Point(0, 0), new Point(0, 1), [
-        { offset: 0, color: "#4EC1E877" },
-        { offset: 1, color: "Transparent" },
+        { offset: 0, color: "#ffffff88" },
+        { offset: 1, color: "transparent" },
       ]),
     })
   );
 
-  return { sciChartSurface, wasmContext };
+  sciChartSurface.zoomExtents();
+  return { wasmContext, sciChartSurface };
 };

@@ -13,12 +13,25 @@ import UserOverview from "./pages/main-site/user_overview";
 import MountainLine from "./pages/main-site/graphs-charts/handleMountainLine";
 import BarChart from "./pages/main-site/graphs-charts/handleBar";
 import Messages from "./pages/main-site/messages";
+import { Navigate } from "react-router-dom";
+
+function PrivateRoute({ children }: { children: JSX.Element }) {
+  const isLoggedIn = !!localStorage.getItem("token");
+  return isLoggedIn ? children : <Navigate to="/login" />;
+}
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
         <Route path="/graph" element={<BarChart />} />
         <Route path="/nav" element={<Nav />} />
         <Route path="/login" element={<LoginPage />} />
