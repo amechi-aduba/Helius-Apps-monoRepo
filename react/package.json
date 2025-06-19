@@ -33,5 +33,16 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "overrides": {
+    "ajv": "6.12.6",
+    "ajv-keywords": "3.5.2",
+    "ajv-formats": "1.6.1",
+    "fork-ts-checker-webpack-plugin": {
+      "schema-utils": {
+        "ajv": "6.12.6",
+        "ajv-keywords": "3.5.2"
+      }
+    }
+  }
 }
