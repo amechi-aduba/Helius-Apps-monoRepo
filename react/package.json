@@ -5,8 +5,8 @@
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "react-router-dom": "^6.26.0",
     "react-icons": "^5.5.0",
@@ -14,20 +14,16 @@
     "ag-grid-react": "^33.3.0",
     "scichart": "^3.5.760",
     "ag-grid-community": "^33.3.0",
-    "@supabase/supabase-js": "^2.50.0",
-    "ajv": "6.12.6",
-    "ajv-keywords": "3.5.2",
-    "ajv-formats": "1.6.1"
+    "@supabase/supabase-js": "^2.50.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "loader-utils": "^3.2.1",
-    "typescript": "^5.7.2"
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^4.9.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "GENERATE_SOURCEMAP=false react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
@@ -38,42 +34,6 @@
     "not op_mini all"
   ],
   "engines": {
-    "node": "18.x"
-  },
-  "overrides": {
-    "ajv": "6.12.6",
-    "ajv-keywords": "3.5.2",
-    "ajv-formats": "1.6.1",
-    "schema-utils": {
-      "ajv": "6.12.6",
-      "ajv-keywords": "3.5.2",
-      "ajv-formats": "1.6.1"
-    },
-    "terser-webpack-plugin": {
-      "ajv": "6.12.6",
-      "schema-utils": {
-        "ajv": "6.12.6",
-        "ajv-keywords": "3.5.2",
-        "ajv-formats": "1.6.1"
-      }
-    },
-    "react-scripts": {
-      "ajv": "6.12.6",
-      "ajv-keywords": "3.5.2",
-      "ajv-formats": "1.6.1",
-      "schema-utils": {
-        "ajv": "6.12.6",
-        "ajv-keywords": "3.5.2",
-        "ajv-formats": "1.6.1"
-      },
-      "terser-webpack-plugin": {
-        "ajv": "6.12.6",
-        "schema-utils": {
-          "ajv": "6.12.6",
-          "ajv-keywords": "3.5.2",
-          "ajv-formats": "1.6.1"
-        }
-      }
-    }
+    "node": "16.x"
   }
 }
