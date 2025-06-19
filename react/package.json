@@ -35,16 +35,8 @@
     "not op_mini all"
   ],
   "overrides": {
-    "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1",
-    "ajv-keywords": "^5.1.0",
-    "fork-ts-checker-webpack-plugin": {
-      "ajv": "^8.12.0",
-      "ajv-keywords": "^5.1.0"
-    },
-    "schema-utils": {
-      "ajv": "^8.12.0",
-      "ajv-keywords": "^5.1.0"
-    }
+    "ajv": "8.11.0",
+    "ajv-formats": "2.1.1",
+    "ajv-keywords": "5.1.0"
   }
 }
